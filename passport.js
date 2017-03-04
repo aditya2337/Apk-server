@@ -12,7 +12,7 @@ passport.use(new TwitterStrategy(
   {
     consumerKey: 'ypqpIPNoN73iiqq4ptC9pzgjm',
     consumerSecret: '0AwXcnBCKRnqaAdHmA5hIc0T7JemGi5HvLZ7L6hLehzLD9O9ba',
-    callbackURL: 'http://localhost:3001/users/auth/twitter/callback'
+    callbackURL: 'http://http://138.197.29.193:3001/users/auth/twitter/callback'
   },
   function (token, tokenSecret, profile, done) {
     User.db.collection('users').findOne({

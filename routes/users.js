@@ -95,7 +95,8 @@ router
 .get('/', function (req, res, next) {
   User.db.collection('users').find().toArray((err, users) => {
     if (err) res.sendStatus(400);
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.json({title: 'All Users',
       users});

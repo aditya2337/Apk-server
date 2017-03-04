@@ -1,0 +1,4 @@
+{
+  "dbUri": "mongodb://admin:admin@ds113670.mlab.com:13670/decompiler",
+  "secret": "node is awesome"
+}

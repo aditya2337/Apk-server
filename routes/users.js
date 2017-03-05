@@ -190,6 +190,7 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  console.log(req.body);
   fs.appendFile(req.query.filePath, req.query.updatedCode, 'utf8', function (err, data) {
     if (err) {
       return res.send(err);

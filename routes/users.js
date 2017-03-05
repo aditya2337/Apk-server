@@ -191,20 +191,34 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  console.log(req.body);
-  exec(`apktool d ./public/upload/temp/${req.file.originalname} -o ./public/upload/temp/decompiled/${req.file.originalname.slice(0, -4)} -f`, (err, stdout, stderr) => {
+  console.log(req.body.userId);
+  exec(`apktool d ./public/upload/temp/${req.file.originalname} -o ./public/upload/temp/decompiled/${req.body.userId}/${req.file.originalname.slice(0, -4)} -f`, (err, stdout, stderr) => {
     if (err) {
       console.log('child processes failed with error code: ' +
       err.code);
     }
     console.log(stdout);
   });
-  diretoryTreeToObj(`./public/upload/temp/decompiled/${req.file.originalname.slice(0, -4)}`, function (err, docs) {
+  diretoryTreeToObj(`./public/upload/temp/decompiled/${req.body.userId}/${req.file.originalname.slice(0, -4)}`, function (err, docs) {
     if (err) {
       console.error(err);
     }
 
     res.json(docs);
+  });
+  // Push the app to mongo
+  var newApp = new App();
+
+  // set the mongo document properties
+  newApp.apk = req.file.originalname;
+  newApp.userId = req.body.userId;
+
+  // save the app
+  newApp.save((err) => {
+    if (err) {
+      throw err;
+    }
+    res.send(null, newApp);
   });
 })
 ;

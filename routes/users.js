@@ -238,7 +238,7 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  diretoryTreeToObj(`./public/upload/temp/decompiled/${req.body.userId}/${req.file.originalname.slice(0, -4)}`, function (err, docs) {
+  diretoryTreeToObj(`./public/upload/temp/decompiled/${req.query.userId}/${req.query.file.slice(0, -4)}`, function (err, docs) {
     if (err) {
       console.error(err);
     }

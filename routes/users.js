@@ -224,21 +224,22 @@ function (req, res) {
     if (err) res.sendStatus(400);
     if (apps) {
       console.log(apps);
-      res.end();
-    }
-    // Push the app to mongo
-    var newApp = new App();
-    // set the mongo document properties
-    newApp.apk = req.query.file;
-    newApp.userId = req.query.userId;
+      res.send(null);
+    } else {
+      // Push the app to mongo
+      var newApp = new App();
+      // set the mongo document properties
+      newApp.apk = req.query.file;
+      newApp.userId = req.query.userId;
 
-    // save the app
-    newApp.save((err) => {
-      if (err) {
-        throw err;
-      }
-      res.send(newApp);
-    });
+      // save the app
+      newApp.save((err) => {
+        if (err) {
+          throw err;
+        }
+        res.send(newApp);
+      });
+    }
   });
 })
 .get('/app/view', (req, res) => {

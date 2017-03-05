@@ -220,7 +220,7 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  App.db.collection('apps').find({apk: req.query.file}, (err, apps) => {
+  App.db.collection('apps').findOne({apk: req.query.file}, (err, apps) => {
     if (err) res.sendStatus(400);
     if (apps) {
       console.log(apps);

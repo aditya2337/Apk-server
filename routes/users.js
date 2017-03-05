@@ -179,12 +179,22 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  console.log(req.query);
   fs.readFile(req.query.filePath, 'utf8', function (err, data) {
     if (err) {
       return res.send(err);
     }
     res.send(data);
+  });
+})
+.get('/app/my-apps/:user_id', function (req, res, next) {
+  var userId = req.params.id;
+  App.db.collection('apps').find({userId}).toArray((err, apps) => {
+    if (err) res.sendStatus(400);
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.json({title: 'User Apps',
+      apps});
   });
 })
 .post('/app', upload.single('file'), (req, res) => {
@@ -211,7 +221,6 @@ function (req, res) {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   // Push the app to mongo
   var newApp = new App();
-  console.log(req.query.file);
   // set the mongo document properties
   newApp.apk = req.query.file;
   newApp.userId = req.query.userId;

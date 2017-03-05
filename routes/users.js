@@ -186,6 +186,17 @@ function (req, res) {
     res.send(data);
   });
 })
+.post('/app/save-code', function (req, res, next) {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  fs.writeFile(req.query.filePath, 'utf8', function (err, data) {
+    if (err) {
+      return res.send(err);
+    }
+    res.send(data);
+  });
+})
 .get('/app/my-apps', function (req, res, next) {
   var userId = req.query.userId;
   App.db.collection('apps').find({userId}).toArray((err, apps) => {
@@ -223,7 +234,6 @@ function (req, res) {
   App.db.collection('apps').findOne({apk: req.query.file}, (err, apps) => {
     if (err) res.sendStatus(400);
     if (apps) {
-      console.log(apps);
       res.send(null);
     } else {
       // Push the app to mongo

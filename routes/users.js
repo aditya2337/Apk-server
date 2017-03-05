@@ -218,7 +218,7 @@ function (req, res) {
     if (err) {
       throw err;
     }
-    res.send(null, newApp);
+    res.send(newApp);
   });
 })
 ;

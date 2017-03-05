@@ -220,18 +220,24 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  // Push the app to mongo
-  var newApp = new App();
-  // set the mongo document properties
-  newApp.apk = req.query.file;
-  newApp.userId = req.query.userId;
-
-  // save the app
-  newApp.save((err) => {
-    if (err) {
-      throw err;
+  App.db.collection('apps').find({apk: req.query.file}).toArray((err, apps) => {
+    if (err) res.sendStatus(400);
+    if (apps) {
+      res.end();
     }
-    res.send(newApp);
+    // Push the app to mongo
+    var newApp = new App();
+    // set the mongo document properties
+    newApp.apk = req.query.file;
+    newApp.userId = req.query.userId;
+
+    // save the app
+    newApp.save((err) => {
+      if (err) {
+        throw err;
+      }
+      res.send(newApp);
+    });
   });
 })
 .get('/app/view', (req, res) => {

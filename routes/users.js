@@ -189,6 +189,7 @@ function (req, res) {
 .get('/app/my-apps/:user_id', function (req, res, next) {
   var userId = req.params.id;
   App.db.collection('apps').find({userId}).toArray((err, apps) => {
+    console.log(userId);
     if (err) res.sendStatus(400);
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');

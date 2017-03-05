@@ -234,6 +234,17 @@ function (req, res) {
     res.send(newApp);
   });
 })
+.get('/app/view', (req, res) => {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  diretoryTreeToObj(`./public/upload/temp/decompiled/${req.body.userId}/${req.file.originalname.slice(0, -4)}`, function (err, docs) {
+    if (err) {
+      console.error(err);
+    }
+    res.json(docs);
+  });
+})
 ;
 
 module.exports = router;

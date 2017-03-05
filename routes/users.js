@@ -211,7 +211,7 @@ function (req, res) {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   // Push the app to mongo
   var newApp = new App();
-  console.log(req.query);
+  console.log(req.query.file.name);
   // set the mongo document properties
   newApp.apk = req.query.file.name;
   newApp.userId = req.query.userId;

@@ -191,7 +191,6 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  console.log(req.body.userId);
   exec(`apktool d ./public/upload/temp/${req.file.originalname} -o ./public/upload/temp/decompiled/${req.body.userId}/${req.file.originalname.slice(0, -4)} -f`, (err, stdout, stderr) => {
     if (err) {
       console.log('child processes failed with error code: ' +
@@ -203,9 +202,13 @@ function (req, res) {
     if (err) {
       console.error(err);
     }
-
-    res.write(JSON.stringify(docs));
+    res.json(docs);
   });
+})
+.post('/app/save-apk', (req, res) => {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   // Push the app to mongo
   var newApp = new App();
 

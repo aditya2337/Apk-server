@@ -204,7 +204,7 @@ function (req, res) {
       console.error(err);
     }
 
-    res.write(docs);
+    res.write(JSON.stringify(docs));
   });
   // Push the app to mongo
   var newApp = new App();

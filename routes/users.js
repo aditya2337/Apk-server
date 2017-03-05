@@ -213,7 +213,7 @@ function (req, res) {
   var newApp = new App();
   console.log(req.query);
   // set the mongo document properties
-  newApp.apk = req.query.file.originalname;
+  newApp.apk = req.query.file.name;
   newApp.userId = req.query.userId;
 
   // save the app

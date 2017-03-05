@@ -190,7 +190,7 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  console.log(req.query.updatedCode.code);
+  console.log(req.query.updatedCode);
   let code = req.query.updatedCode;
   fs.appendFile(req.query.filePath, JSON.stringify(code.code), 'utf8', function (err, data) {
     if (err) {
@@ -233,7 +233,7 @@ function (req, res) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  App.db.collection('apps').findOne({apk: req.query.file}, (err, apps) => {
+  App.db.collection('apps').findOne({apk: req.query.file, userId: req.query.userId}, (err, apps) => {
     if (err) res.sendStatus(400);
     if (apps) {
       res.send(null);

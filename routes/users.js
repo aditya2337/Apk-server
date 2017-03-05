@@ -186,8 +186,8 @@ function (req, res) {
     res.send(data);
   });
 })
-.get('/app/my-apps/:user_id', function (req, res, next) {
-  var userId = req.params.id;
+.get('/app/my-apps', function (req, res, next) {
+  var userId = req.query.userId;
   App.db.collection('apps').find({userId}).toArray((err, apps) => {
     console.log(userId);
     if (err) res.sendStatus(400);

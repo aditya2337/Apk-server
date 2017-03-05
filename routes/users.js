@@ -62,27 +62,6 @@ var diretoryTreeToObj = function (dir, done) {
   });
 };
 
-function dirTree (filename) {
-  var stats = fs.lstatSync(filename),
-    info = {
-      path: filename,
-      name: path.basename(filename)
-    };
-
-  if (stats.isDirectory()) {
-    info.type = 'folder';
-    info[path.basename(filename)] = fs.readdirSync(filename).map(function (child) {
-      return dirTree(filename + '/' + child);
-    });
-  } else {
-    // Assuming it's a file. In real life it could be a symlink or
-    // something else!
-    info.type = 'file';
-  }
-
-  return info;
-}
-
 const upload = multer({ storage: storage });
 
 /* GET users listing. */
@@ -92,16 +71,6 @@ router
 .use(bodyParser.urlencoded({ extended: true }))
 .use(bodyParser.json())
 // API
-.get('/', function (req, res, next) {
-  User.db.collection('users').find().toArray((err, users) => {
-    if (err) res.sendStatus(400);
-    res.header('Access-Control-Allow-Credentials', true);
-    res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.json({title: 'All Users',
-      users});
-  });
-})
 .get('/user/:id', (req, res, next) => {
   var id = req.params.id;
   User.db.collection('users')

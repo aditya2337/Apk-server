@@ -191,6 +191,7 @@ function (req, res) {
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   const code = req.query.updatedCode;
+  console.log(code);
   fs.writeFile(req.query.filePath, code, 'utf8', function (err, data) {
     if (err) {
       return res.send(err);

@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var busboy = require('connect-busboy');
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
+var cors = require('cors');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -22,9 +23,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
+app.use(cors());
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(busboy());
 app.use(session({

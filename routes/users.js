@@ -10,8 +10,7 @@ const router = express.Router();
 const multer = require('multer');
 const passport = require('passport');
 const crypto = require('crypto');
-const dir = require('node-dir');
-var exec = require('child_process').execSync;
+var exec = require('child_process').spawn;
 require('../passport');
 
 var storage = multer.diskStorage({
@@ -26,7 +25,6 @@ var storage = multer.diskStorage({
 
 var diretoryTreeToObj = function (dir, done) {
   var results = {};
-  var _contents = [];
   var files = [];
   fs.readdir(dir, function (err, list) {
     if (err) {
@@ -39,9 +37,11 @@ var diretoryTreeToObj = function (dir, done) {
     list.forEach(function (file, index) {
       file = path.resolve(dir, file);
       fs.stat(file, function (err, stat) {
+        if (err) throw err;
         results['_contents'] = files;
         if (stat && stat.isDirectory()) {
           diretoryTreeToObj(file, function (err, res) {
+            if (err) throw err;
             results[path.basename(file)] = res;
             if (!--pending) {
               done(null, results);
@@ -109,7 +109,7 @@ router
 
 // login and registration actions
 .get('/home', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -120,7 +120,7 @@ router
   });
 })
 .get('/login', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -129,7 +129,7 @@ router
   });
 })
 .post('/login', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -139,7 +139,7 @@ router
   failureRedirect: '/users/login'
 }))
 .get('/logout', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -151,7 +151,7 @@ router
 
 // signup
 .get('/signup', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -161,7 +161,7 @@ router
 })
 .post('/signup', (req, res, next) => {
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
@@ -177,13 +177,13 @@ passport.authenticate('twitter'))
 passport.authenticate('twitter', { failureRedirect: '/login' }),
 function (req, res) {
   // Successful authentication, redirect home.
-  res.redirect('http://apk-decompiler.herokuapp.com/home');
+  res.redirect('http://apk-decompiler.surge.sh/home');
 })
 
 // app links
 .get('/app/get-code', function (req, res, next) {
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   fs.readFile(req.query.filePath, 'utf8', function (err, data) {
@@ -195,12 +195,12 @@ function (req, res) {
 })
 .post('/app/save-code', function (req, res, next) {
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  const code = req.query.updatedCode;
-  console.log(req.query.filePath);
-  fs.writeFile(req.query.filePath, code, 'utf8', function (err, data) {
+  const code = req.body.updatedCode;
+  console.log(req.body.updatedCode);
+  fs.writeFile(req.body.file, code, 'utf8', function (err, data) {
     if (err) {
       return res.send(err);
     }
@@ -213,35 +213,72 @@ function (req, res) {
     console.log(userId);
     if (err) res.sendStatus(400);
     res.header('Access-Control-Allow-Credentials', true);
-    res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
+    res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
+    res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.json({title: 'User Apps',
       apps});
   });
 })
-.post('/app', upload.single('file'), (req, res) => {
+.get('/app/upload-file', (req, res) => {
+
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  exec(`apktool d ./public/upload/temp/${req.file.originalname} -o ./public/upload/temp/decompiled/${req.body.userId}/${req.file.originalname.slice(0, -4)} -f`, (err, stdout, stderr) => {
-    if (err) {
-      console.log('child processes failed with error code: ' +
-      err.code);
-    }
-    console.log(stdout);
+  res.writeHead(200, {
+    'Connection': 'keep-alive',
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache'
   });
-  diretoryTreeToObj(`./public/upload/temp/decompiled/${req.body.userId}/${req.file.originalname.slice(0, -4)}`, function (err, docs) {
-    if (err) {
-      console.error(err);
+  let str = '';
+  const spw = exec('apktool',
+    [
+      'd',
+      `./public/upload/temp/${req.query.originalname}`,
+      '-o',
+      `./public/upload/temp/decompiled/${req.query.userId}/${req.query.originalname.slice(0, -4)}`,
+      '-f'
+    ]
+  );
+
+  spw.stdout.on('data', function (data) {
+    str += data.toString();
+
+    // Flush out line by line.
+    var lines = str.split("\n");
+    for(var i in lines) {
+      if(i == lines.length - 1) {
+        // str = +lines[i];
+        console.log('do nothing');
+      } else{
+        // Note: The double-newline is *required*
+        // console.log(str);
+        res.write('data:'+ JSON.stringify({ msg : lines[i].substring(3) }) +'\n\n');
+      }
     }
-    res.json(docs);
   });
+
+  spw.stdout.on('close', (code) => {
+    res.write('data: ' + JSON.stringify({ msg : 'end' }) + '\n\n')
+    res.end();
+  })
+
+  spw.stderr.on('data', function (data) {
+    res.end('stderr: ' + data);
+  });
+})
+.post('/app', upload.single('file'), (req, res) => {
+
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.send('done upload');
 })
 .post('/app/save-apk', (req, res) => {
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   App.db.collection('apps').findOne({apk: req.query.file, userId: req.query.userId}, (err, apps) => {
@@ -267,7 +304,7 @@ function (req, res) {
 })
 .get('/app/view', (req, res) => {
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Origin', 'http://apk-decompiler.surge.sh');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   diretoryTreeToObj(`./public/upload/temp/decompiled/${req.query.userId}/${req.query.file.slice(0, -4)}`, function (err, docs) {
